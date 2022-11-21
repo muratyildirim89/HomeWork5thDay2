@@ -20,6 +20,8 @@ import com.KodlamaioHomeWork5thDay.HomeWork5thDay.dataAccess.abstracts.SubTechno
 import com.KodlamaioHomeWork5thDay.HomeWork5thDay.entities.concretes.ProgrammingLanguage;
 import com.KodlamaioHomeWork5thDay.HomeWork5thDay.entities.concretes.SubTechnology;
 
+import javax.transaction.Transactional;
+
 @Service
 public class SubTechnologyManager implements SubTechnologyService {
     private SubTechnologyRepository subTechnologyRepository;
@@ -44,19 +46,17 @@ public class SubTechnologyManager implements SubTechnologyService {
         this.subTechnologyRepository.save(subTechnology);
     }
 
+    @Transactional
     @Override
     public UpdateSubTechnologyResponse update(UpdateSubTechnologyRequest updateSubTechnologyRequest) throws RuntimeException {
         //CheckName(updateSubTechnologyRequest.getName());
 
-        SubTechnology subTechnology = modelMapper
-                .map(updateSubTechnologyRequest, SubTechnology.class);
-        SubTechnology saveSubTechnology = subTechnologyRepository.save(subTechnology);
+        SubTechnology subTechnology = subTechnologyRepository.getReferenceById(updateSubTechnologyRequest.getId());
+        modelMapper.map(updateSubTechnologyRequest, subTechnology);
 
-        UpdateSubTechnologyResponse updateSubTechnologyResponse = modelMapper
-                .map(saveSubTechnology, UpdateSubTechnologyResponse.class);
-
-        return updateSubTechnologyResponse;
+        return modelMapper.map(subTechnology, UpdateSubTechnologyResponse.class);
     }
+
 
     @Override
     public DeleteSubTechnologyResponse delete(DeleteSubTechnologyRequest deleteSubTechnologyRequest) {
